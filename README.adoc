@@ -1,0 +1,75 @@
+= Spring Boot Servlet Inherit Channel
+:source-language: java
+// Project meta
+:name: spring-boot-servlet-inherit-channel
+:version: 0.1.0-SNAPSHOT
+:group-id: cz.jirutka.spring
+:artifact-id: {name}
+:gh-name: jirutka/{name}
+:gh-branch: master
+:codacy-id: TODO
+
+ifdef::env-github[]
+image:https://travis-ci.org/{gh-name}.svg?branch={gh-branch}["Build Status", link="https://travis-ci.org/{gh-name}"]
+image:https://api.codacy.com/project/badge/grade/{codacy-id}["Codacy code quality", link="https://www.codacy.com/app/{gh-name}"]
+image:https://img.shields.io/maven-central/v/{group-id}/{artifact-id}.svg[Maven Central]
+endif::env-github[]
+
+
+TODO
+
+
+== How to get it?
+
+Released versions are available in The Central Repository.
+Just add this artifact to your project:
+
+._Maven_
+[source, xml, subs="verbatim, attributes"]
+----
+<dependency>
+    <groupId>{group-id}</groupId>
+    <artifactId>{artifact-id}</artifactId>
+    <version>{version}</version>
+</dependency>
+----
+
+._Gradle_
+[source, groovy, subs="verbatim, attributes"]
+compile '{group-id}:{artifact-id}:{version}'
+
+However if you want to use the last snapshot version, you have to add the JFrog OSS repository:
+
+._Maven_
+[source, xml]
+----
+<repository>
+    <id>jfrog-oss-snapshot-local</id>
+    <name>JFrog OSS repository for snapshots</name>
+    <url>https://oss.jfrog.org/oss-snapshot-local</url>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+</repository>
+----
+
+._Gradle_
+[source, groovy]
+----
+repositories {
+  maven {
+    url 'https://oss.jfrog.org/oss-snapshot-local'
+  }
+}
+----
+
+
+== Contributions
+
+…are always welcome.
+Don’t hesitate to submit a https://github.com/{gh-name}/issues[bug report] or a https://github.com/{gh-name}/pulls[pull requests].
+
+
+== License
+
+This project is licensed under http://www.apache.org/licenses/LICENSE-2.0.html[Apache License 2.0].
