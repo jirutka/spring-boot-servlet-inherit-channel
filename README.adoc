@@ -7,7 +7,7 @@
 :artifact-id: {name}
 :gh-name: jirutka/{name}
 :gh-branch: master
-:codacy-id: TODO
+:codacy-id: 95bbabc07f7d41fd8ce7ac15ebb0f97a
 
 ifdef::env-github[]
 image:https://travis-ci.org/{gh-name}.svg?branch={gh-branch}["Build Status", link="https://travis-ci.org/{gh-name}"]
