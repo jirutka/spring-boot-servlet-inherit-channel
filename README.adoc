@@ -19,6 +19,50 @@ endif::env-github[]
 TODO
 
 
+== Usage
+
+=== Using Auto-configuration
+
+[source, java]
+----
+@SpringBootApplication
+@EnableServletInheritChannel
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+----
+
+To start the application with inherited channel, set attribute `server.inherit-channel` to `true` (e.g. using CLI argument `--server.inherit-channel=true`)
+
+
+=== Without Auto-configuration
+
+[source, java]
+----
+@Configuration
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+    @Bean
+    public JettyEmbeddedServletContainerFactory embeddedServletContainerFactory(
+            @Value("${server.inherit-channel:false}") boolean inheritChannel) {
+
+        JettyEmbeddedServletContainerFactory factory = new JettyEmbeddedServletContainerFactory();
+        if (inheritChannel) {
+            factory.addServerCustomizers(new InheritChannelJettyServerCustomizer());
+        }
+        return factory;
+    }
+}
+----
+
+
 == How to get it?
 
 Released versions are available in The Central Repository.
