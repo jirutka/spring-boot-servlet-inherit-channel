@@ -1,0 +1,92 @@
+#!/usr/bin/env ruby
+# Bind TCP socket on $HOST:$PORT as FD 0, start JAR $1 with arguments $@,
+# request http://$HOST:$PORT/ and wait for response. Eventually stop the
+# application and print the result.
+
+require 'net/http'
+require 'socket'
+
+HOST = ENV.fetch('HOST', '127.0.0.1')
+PORT = ENV.fetch('PORT', '8080').to_i
+JAVA = ENV.fetch('JAVA', 'java')
+TIMEOUT = ENV.fetch('TIMEOUT', '15').to_i
+
+
+include Process
+
+def die(msg, status: 1)
+  warn "\e[1;31mERROR:\e[1;39m #{msg}\e[0m"
+  exit status
+end
+
+def say(msg)
+  warn "\e[1;37m> #{msg}\e[0m"
+end
+
+def say_ok(msg)
+  warn "\e[1;32m> OK\e[1;39m - #{msg}\e[0m"
+end
+
+def say_fail(msg)
+  warn "\e[1;31m> FAIL\e[1;39m - #{msg}\e[0m"
+end
+
+def bind_tcp_socket(host, port)
+  TCPServer.new(host, port).tap do |sock|
+    sock.setsockopt :SOCKET, :REUSEADDR, 1
+  end
+end
+
+
+# Flush stderr output immediately.
+$stderr.sync = true
+
+# Raise exception when child process die.
+trap 'CLD' do
+  raise SignalException, 'CLD'
+end
+
+case ARGV[0]
+when nil, '-h', '--help'
+  warn "Usage: #{$PROGRAM_NAME} JAR_PATH"
+  exit 1
+end
+
+unless File.readable? ARGV[0]
+  die "File #{ARGV[0]} does not exist or not readable!"
+end
+
+say "Starting with socket binded on #{HOST}:#{PORT} as FD 0..."
+sock = bind_tcp_socket HOST, PORT
+pid = spawn JAVA, '-jar', *ARGV, in: sock.to_i
+
+result = begin
+  Net::HTTP
+    .start(HOST, PORT, read_timeout: TIMEOUT) { |http| http.get '/' }
+    .code.to_i
+rescue Exception => e
+  e
+ensure
+  say 'Stopping application...'
+  trap 'CLD', 'DEFAULT'  # reset trap
+  kill 'TERM', pid rescue nil
+  wait pid rescue nil
+end
+
+puts ''
+case result
+when 0..499
+  say_ok "Application responded with status: #{result}"
+  exit 0
+when Integer
+  say_fail "Application responded with status: #{result}"
+  exit 10
+when Net::ReadTimeout
+  say_fail "No response from application on port #{PORT}"
+  exit 11
+when SignalException
+  say_fail 'Application died'
+  exit 12
+else
+  die "#{result}", status: 13
+end

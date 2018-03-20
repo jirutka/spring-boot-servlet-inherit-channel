@@ -10,9 +10,13 @@ env:
     secure: "bzuNxOqjQboSdu2S5uvViMwT5n3gJ6ieilaW4D+5lDsdYlpNiAkUtxgjU13a827589HNX0eUN24BQrdaHjLVR9tTFAUJEJiLFH/4bwEt24CCgfDLjSGoTW7fSpzikMim5ru2KGlimP0Mr0qNHLC0GLHGILK0773Eb8ddE53C7dlufDBxiOdO/vQDnsU6ii5cFoem5i74xSTNzJts7MmU4TJE9dTMY/3B/Rp3cZVQIGUPXgXeXSgpUH/fRBCFI06dQp0oJnzMjdz7YwolnFz+qIhBHF1qg719Wiy98EjvPkIEZ54NTjOYy1LI27vZh3djMQDL5s4cc8HyvkJkFBYuvltJui5rH1LzOumyO7vzxbClMjUE9Peb3lrE2hd5+//+fKqzcakW5DW9OysmOqlSPO9wgQGmc4H3drynsKerrfmqZBYyDgH9rGs5UVxXJBhzPQ4HGbbGPz7CT9yPbtx5kqBdO2g2V8JxaV0lMjA+3+gQ/mv9aHNSlYyRUDLsnT1tXnVBdfy4iQ+jpaDXwAYipGGqEBnLQgaC87Arp6TPNuTgQQRoPt4Y2nsGncc6Vtf7IIIJe4iwLSGW9NvGyCNBExTpUShbghyPgIiGr1v2lP6robXJZ07cRkhQOvdxBKTNLxbMnvVAKla+gyXLTaZEwKJqt36mVXOL+oH7oqLBVGk="  # BINTRAY_API_KEY
 
 install:
-  - mvn clean install -DskipTests=true
+  - mvn clean install --batch-mode -DskipTests=true
+before_script:
+  - VERSION=$(mvn exec:exec -q --non-recursive -Dexec.executable='echo' -Dexec.args='${project.version}')
 script:
-  - mvn verify -B
+  - mvn verify --batch-mode
+  - mvn package -f example/jetty --batch-mode -Dinherit-channel.path=$VERSION
+  - ./utils/test-inherit-socket ./example/jetty/target/*.jar --server.inherit-channel=true
 
 before_cache:
   - rm -Rf $HOME/.m2/repository/cz/jirutka/spring/
