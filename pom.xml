@@ -19,7 +19,7 @@
     <packaging>jar</packaging>
 
     <name>Spring Boot Servlet Inherit Channel</name>
-    <description>Pass TCP socket to your Spring Boot application with embedded servlet container.</description>
+    <description>Run your Spring Boot application with inherited socket created on behalf by supervisor.</description>
     <url>http://github.com/jirutka/spring-boot-servlet-inherit-channel</url>
     <inceptionYear>2018</inceptionYear>
 
