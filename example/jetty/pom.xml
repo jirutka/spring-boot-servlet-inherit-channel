@@ -30,7 +30,7 @@
     </licenses>
 
     <properties>
-        <inherit-channel.version>0.2.0-SNAPSHOT</inherit-channel.version>
+        <inherit-channel.version>0.1.1</inherit-channel.version>
         <java.version>1.7</java.version>
     </properties>
 
